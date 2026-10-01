@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#183d32">
+	<meta name="description" content="An interactive model by Demetri of the full physiology behind rumination: the allostatic loops firing between thought, brain chemistry and body, and how the Juniper Method's three layers break them.">
+	<title>The Rumination Model | Juniper Wayfinding</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="site.css">
+<style>
+  .wrap{font-family:var(--font-sans,'Manrope',ui-sans-serif,system-ui,sans-serif);color:var(--color-text-primary,#1a1a18);max-width:900px;margin:0 auto;background:#fffefa;line-height:normal;border-radius:16px;padding:24px 24px 20px;box-shadow:0 1px 2px rgba(0,0,0,.04),0 8px 28px rgba(24,61,50,.06)}
+  .lever,.reset{font-family:inherit;color:inherit}
+  .canvas-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+  .swipe{display:none;font-size:11px;color:#8b8a82;text-align:center;margin:6px 0 2px}
+  .head h2{font-size:19px;font-weight:600;margin:0 0 2px}
+  .head p{font-size:13px;color:var(--color-text-secondary,#57564f);margin:0 0 14px;line-height:1.5}
+
+  .banner{display:flex;gap:12px;align-items:flex-start;border:1px solid;border-radius:12px 12px 0 0;border-bottom:none;padding:13px 15px;transition:background .35s,border-color .35s}
+  .dir{flex:0 0 auto;font-size:19px;width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-weight:700;transition:all .35s}
+  .rows{flex:1;min-width:0}
+  .row{display:flex;gap:8px;align-items:flex-start;padding:4px 0;font-size:12.5px;line-height:1.45;transition:margin .3s}
+  .row .pill{flex:0 0 auto;width:17px;height:17px;border-radius:5px;display:grid;place-items:center;font-size:10px;font-weight:700;margin-top:1px}
+  .pill.no{background:#FBE6E0;color:#9A2A1C;box-shadow:inset 0 0 0 1px #E7C3B8}
+  .pill.yes{background:#E1F5EE;color:#0B6149;box-shadow:inset 0 0 0 1px #BFE6D8}
+  .row b{font-weight:600}
+  .tier{flex:0 0 auto;width:118px;font-size:10px;font-weight:700;letter-spacing:.03em;color:#9a988f;line-height:1.55}
+  .row .why{color:var(--color-text-secondary,#57564f)}
+  .r1{margin-left:0}.r2{margin-left:18px}.r3{margin-left:36px}
+  .result{margin-left:54px;margin-top:7px;padding-top:8px;border-top:1px dashed rgba(0,0,0,.18);font-size:13px;font-weight:600;line-height:1.45;display:flex;gap:8px}
+  .result .ar{opacity:.45;font-weight:400}
+  @media(max-width:640px){.r2{margin-left:8px}.r3{margin-left:16px}.result{margin-left:0}.banner .dir{width:30px;height:30px;font-size:17px}}
+  .wrap[data-level="0"] .dir{background:#FBE6E0;color:#9A2A1C}
+  .wrap[data-level="1"] .dir,.wrap[data-level="2"] .dir{background:#FAF1DC;color:#8A6A1F}
+  .wrap[data-level="3"] .dir{background:#E1F5EE;color:#0B6149}
+  .wrap[data-level="0"] .banner{background:#FCF1ED;border-color:#E7C3B8}
+  .wrap[data-level="1"] .banner,.wrap[data-level="2"] .banner{background:#FDF8EC;border-color:#E6D6A8}
+  .wrap[data-level="3"] .banner{background:#EDF8F3;border-color:#BFE6D8}
+  .canvas{border:1px solid;border-radius:0 0 12px 12px;padding:8px 10px 4px;transition:border-color .35s}
+  .wrap[data-level="0"] .canvas{border-color:#E7C3B8}
+  .wrap[data-level="1"] .canvas,.wrap[data-level="2"] .canvas{border-color:#E6D6A8}
+  .wrap[data-level="3"] .canvas{border-color:#BFE6D8}
+
+  .wrap svg{width:100%;height:auto;display:block}
+  .wrap text{font-family:inherit}
+  .nt{font-size:13px;font-weight:600}
+  .ns{font-size:10.5px;font-weight:500}
+  .elab{font-size:10.5px;font-weight:700;letter-spacing:.03em}
+  .lyr{font-size:9.5px;font-weight:700;letter-spacing:.09em;fill:#8b8a82}
+  .lyrs{font-size:9px;font-weight:500;fill:#a8a69c}
+  .band{fill:rgba(0,0,0,.022)}
+  .band.b2{fill:rgba(0,0,0,.045)}
+  .ed{fill:none;stroke:#9a988f;stroke-width:1.3;transition:all .4s}
+
+  .ring{fill:none;stroke:#C0392B;stroke-width:3;stroke-dasharray:8 5;animation:flow .8s linear infinite;transition:opacity .45s,stroke-width .45s}
+  .rlab{fill:#C0392B;transition:opacity .45s}
+  .wrap[data-level="1"] .ring{opacity:.5;stroke-width:2.4;animation-duration:1.6s}
+  .wrap[data-level="2"] .ring{opacity:.3;stroke-width:1.8;animation-duration:2.6s}
+  .wrap[data-level="1"] .rlab{opacity:.55}
+  .wrap[data-level="2"] .rlab{opacity:.35}
+  .wrap[data-level="3"] .ring{opacity:.1;stroke-width:1.2;animation:none;stroke-dasharray:none}
+  .wrap[data-level="3"] .rlab{opacity:.15}
+  /* the rigid demand is what regenerates the verdict — kill it and this segment goes quiet */
+  .wrap[data-belief="1"] .seg-verdict{opacity:.1;animation:none;stroke-dasharray:none;stroke-width:1.2}
+  .wrap[data-belief="1"] .lab-verdict{opacity:.15}
+
+  .exit{fill:none;stroke:#0F6E56;stroke-width:2.6;opacity:.1;transition:opacity .45s}
+  .ehead{fill:#0F6E56;opacity:.1;transition:opacity .45s}
+  .elabg{fill:#0F6E56;opacity:.25;transition:opacity .45s}
+  .wrap[data-act="1"] .exit{opacity:1;stroke-dasharray:8 5;animation:flow .9s linear infinite}
+  .wrap[data-act="1"] .ehead,.wrap[data-act="1"] .elabg{opacity:1}
+  #exitbox,#beliefbox,#arobox{transition:all .45s}
+
+  .bedge{fill:none;stroke:#C0392B;stroke-width:2.6;transition:all .45s}
+  .bhead{fill:#C0392B;transition:fill .45s}
+  .wrap[data-belief="1"] .bedge{stroke:#0F6E56;stroke-width:2;opacity:.75}
+  .wrap[data-belief="1"] .bhead{fill:#0F6E56}
+
+  .will{fill:none;stroke:#534AB7;stroke-width:2;stroke-dasharray:3 6;opacity:.55;transition:all .45s}
+  .willhead{fill:#C0392B;transition:fill .45s,opacity .45s}
+  .amp{transition:opacity .4s}
+  .wrap[data-belief="1"] .amp{opacity:0}
+  .wrap[data-belief="1"] .willhead{fill:#534AB7;opacity:.35}
+  .wrap[data-belief="1"] .will{opacity:.3}
+
+  .entry{opacity:0;transition:opacity .4s}
+  @keyframes flow{to{stroke-dashoffset:-26}}
+  @media (prefers-reduced-motion:reduce){.ring,.exit{animation:none!important}}
+
+  .key{display:flex;flex-wrap:wrap;gap:12px;font-size:11px;color:var(--color-text-secondary,#57564f);margin:10px 0 12px}
+  .key span{display:flex;align-items:center;gap:5px}
+  .sw2{width:10px;height:10px;border-radius:3px;display:inline-block}
+
+  .levers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:6px 0 4px}
+  @media(max-width:700px){.levers{grid-template-columns:1fr}}
+  .lever{border:1px solid var(--color-border-primary,rgba(0,0,0,.16));border-radius:12px;padding:12px 13px;cursor:pointer;background:var(--color-background-primary,#fff);transition:all .25s;text-align:left}
+  .lever:hover{border-color:#9a988f}
+  .lever.on{border-color:#0F6E56;background:#EDF8F3;box-shadow:inset 0 0 0 1px #0F6E56}
+  .lt{display:flex;align-items:flex-start;gap:8px;font-size:13px;font-weight:600;line-height:1.3}
+  .sw{flex:0 0 auto;width:30px;height:18px;border-radius:10px;background:#d9d7cf;position:relative;transition:background .25s;margin-top:1px}
+  .sw::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .25s}
+  .lever.on .sw{background:#0F6E56}.lever.on .sw::after{transform:translateX(12px)}
+  .ld{font-size:11.5px;color:var(--color-text-secondary,#57564f);margin:6px 0 0;line-height:1.45}
+  .foot{font-size:11.5px;color:var(--color-text-secondary,#57564f);line-height:1.55;margin:12px 0 0}
+  .reset{font-size:12px;background:none;border:none;color:#534AB7;cursor:pointer;padding:0;text-decoration:underline;margin:10px 0 0}
+  @media(max-width:640px){
+    .wrap{border-radius:12px;padding:18px 14px 20px}
+    .head h2{font-size:21px;line-height:1.25}
+    .head p{font-size:14px}
+    .banner{padding:12px}
+    .row{display:grid;grid-template-columns:17px 1fr;column-gap:8px;font-size:13px}
+    .row .pill{grid-row:span 2}
+    .row .tier{width:auto;font-size:9.5px;line-height:1.4}
+    .row>span:last-child{grid-column:2}
+    .canvas{padding:6px 0 4px}
+    .canvas svg{min-width:620px;padding:0 8px}
+    .swipe{display:block}
+    .ld{font-size:12.5px}
+    .reset{padding:8px 0}
+  }
+</style>
+</head>
+
+<body>
+	<header class="site-header"><nav class="nav-wrap shell" aria-label="Main navigation">
+		<a class="brand" href="index.html" aria-label="Juniper Wayfinding home"><img class="brand-logo" src="logo_tr.png" width="600" height="421" alt="Juniper Wayfinding"></a>
+		<button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-links"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+		<div class="nav-links" id="site-links"><a href="index.html">Home</a><a href="method.html">Juniper Method</a><a class="nav-sub" href="method.html#inspired-by-juniper">Inspired by Juniper</a><a href="helps.html">Common Patterns</a><a href="rates.html">Rates</a><a href="about.html">About</a><a class="nav-book" href="booking.html">I’m ready to align</a></div>
+	</nav></header>
+	<main>
+		<section class="page-hero"><div class="shell"><h1>The Rumination Model</h1><p class="proof-sub">Proven by Science, Designed for Understanding</p><p>The complete physiology of a mind that won’t shut off: the allostatic loops firing between story, appraisal, brain chemistry and body, and the three Juniper layers that close them. Flip the switches below and watch it change.</p></div></section>
+		<section class="section model-section"><div class="shell">
+<div class="wrap" data-level="0" data-act="0" data-belief="0">
+  <div class="head">
+    <h2>Why my mind won't shut off about it</h2>
+    <p>That person. That mistake. That task I haven't done. I can't win against it by thinking harder. Follow the red loop below: it circles endlessly.</p>
+  </div>
+
+  <div class="banner">
+    <div class="dir" id="dir">⟳</div>
+    <div class="rows">
+      <div class="row r1"><span class="pill no" id="p-act">✕</span><span class="tier">Bedrock · belonging</span><span id="t-act"></span></div>
+      <div class="row r2"><span class="pill no" id="p-calm">✕</span><span class="tier">Trunk · body</span><span id="t-calm"></span></div>
+      <div class="row r3"><span class="pill no" id="p-bel">✕</span><span class="tier">Canopy · thoughts</span><span id="t-bel"></span></div>
+      <div class="result"><span class="ar">⟹</span><span id="res"></span></div>
+    </div>
+  </div>
+
+  <div class="canvas">
+  <div class="canvas-scroll">
+  <svg viewBox="0 0 800 516" role="img" aria-label="A closed rumination loop with a rigid demand regenerating the verdict, and an unused exit to the right">
+    <defs>
+      <marker id="ah" markerUnits="userSpaceOnUse" viewBox="0 0 12 12" refX="15" refY="6" markerWidth="14" markerHeight="14" orient="auto-start-reverse"><path d="M2 2 L10 6 L2 10" fill="none" stroke="context-stroke" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    </defs>
+
+    <rect class="band" x="0" y="14" width="800" height="62" rx="6"/>
+    <rect class="band b2" x="0" y="96" width="800" height="60" rx="6"/>
+    <rect class="band" x="0" y="182" width="800" height="58" rx="6"/>
+    <rect class="band b2" x="0" y="272" width="800" height="60" rx="6"/>
+    <rect class="band" x="0" y="380" width="800" height="60" rx="6"/>
+
+    <text class="lyr" x="10" y="40">STORY · RULES</text><text class="lyrs" x="10" y="53">what I tell myself</text>
+    <text class="lyr" x="10" y="120">APPRAISAL</text><text class="lyrs" x="10" y="133">my verdict</text>
+    <text class="lyr" x="10" y="206">SIMULATION</text><text class="lyrs" x="10" y="219">the replay</text>
+    <text class="lyr" x="10" y="296">CHEMISTRY</text><text class="lyrs" x="10" y="309">the alarm</text>
+    <text class="lyr" x="10" y="404">BODY</text><text class="lyrs" x="10" y="417">the fuel</text>
+
+    <!-- ===== THE RING ===== -->
+    <path class="ring seg-verdict" d="M420 146 L420 178" marker-end="url(#ah)"/>
+    <text class="elab rlab lab-verdict" x="432" y="170">still unresolved</text>
+    <path class="ring" d="M420 232 L420 266" marker-end="url(#ah)"/>
+    <text class="elab rlab" x="432" y="258">threat tag</text>
+    <path class="ring" d="M420 324 L420 372" marker-end="url(#ah)"/>
+    <text class="elab rlab" x="432" y="356">alarm · cortisol</text>
+    <path class="ring" d="M352 410 H 116 Q 100 410 100 394 V 141 Q 100 125 116 125 H 226" marker-end="url(#ah)"/>
+    <text class="elab rlab" x="86" y="272" text-anchor="middle" transform="rotate(-90 86 272)">my body reports: still not safe</text>
+
+    <!-- ===== THE RIGID DEMAND -> HUB ===== -->
+    <path class="bedge" d="M650 70 L618 98"/>
+    <path class="bhead" d="M626 92 L610 104 L632 106 Z"/>
+    <text class="elab" id="l-bedge" x="672" y="96" fill="#C0392B">sets the verdict</text>
+
+    <!-- ===== SUPPRESSION ===== -->
+    <path class="will" d="M310 46 C 208 62, 196 158, 292 204"/>
+    <path class="willhead" d="M285 195 L300 206 L284 214 Z"/>
+    <text class="elab" x="196" y="186" text-anchor="middle" fill="#534AB7" id="l-will">"just stop thinking about it"</text>
+    <g class="amp">
+      <circle cx="258" cy="232" r="9" fill="#FBE6E0" stroke="#C0392B" stroke-width="1.4"/>
+      <text x="258" y="236" text-anchor="middle" font-size="12" font-weight="700" fill="#C0392B">+</text>
+      <text class="elab" x="258" y="256" text-anchor="middle" fill="#C0392B">feeds it</text>
+    </g>
+
+    <!-- ===== THE EXIT ===== -->
+    <path class="exit" d="M540 211 L556 211"/>
+    <path class="ehead" d="M553 204 L568 211 L553 218 Z"/>
+    <path class="exit" d="M586 240 L490 272"/>
+    <path class="ehead" d="M498 264 L480 276 L502 278 Z"/>
+    <text class="elab elabg" x="556" y="266" text-anchor="middle">removes the stake</text>
+
+    <g class="entry" id="entryact">
+      <path class="exit" d="M788 211 L768 211" style="opacity:1"/>
+      <path class="ehead" d="M770 204 L754 211 L770 218 Z" style="opacity:1"/>
+      <text class="elab" x="700" y="252" text-anchor="middle" fill="#0F6E56">separate worth from output</text>
+    </g>
+    <g class="entry" id="entrycalm">
+      <path class="exit" d="M208 486 L208 456" style="opacity:1"/>
+      <path class="ehead" d="M201 458 L208 444 L215 458 Z" style="opacity:1"/>
+      <text class="elab" x="208" y="502" text-anchor="middle" fill="#0F6E56">sleep · same wake time</text>
+      <path class="exit" d="M420 486 L420 456" style="opacity:1"/>
+      <path class="ehead" d="M413 458 L420 444 L427 458 Z" style="opacity:1"/>
+      <text class="elab" x="420" y="502" text-anchor="middle" fill="#0F6E56">breathwork · exercise · stimulant adjustment</text>
+    </g>
+    <g class="entry" id="entrybelief">
+      <path class="exit" d="M660 -6 L660 16" style="opacity:1"/>
+      <path class="ehead" d="M653 14 L660 28 L667 14 Z" style="opacity:1"/>
+    </g>
+
+    <!-- grey supporting edges -->
+    <path class="ed" d="M208 272 L268 152" stroke-width="1" marker-end="url(#ah)"/>
+    <path class="ed" d="M632 272 L578 158" stroke-width="1" marker-end="url(#ah)"/>
+    <path class="ed" d="M558 402 L494 402" marker-end="url(#ah)"/>
+    <path class="ed" d="M284 418 L344 418" marker-start="url(#ah)" marker-end="url(#ah)"/>
+    <path class="ed" d="M488 300 L558 300" marker-end="url(#ah)"/>
+
+    <!-- ===== NODES ===== -->
+    <g><rect x="290" y="24" width="220" height="42" rx="9" fill="#EEEDFE" stroke="#534AB7" stroke-width=".6"/>
+      <text class="nt" x="400" y="40" text-anchor="middle" fill="#3C3489">My narrator</text>
+      <text class="ns" id="s-narr" x="400" y="54" text-anchor="middle" fill="#534AB7"></text></g>
+
+    <g><rect id="beliefbox" x="560" y="24" width="200" height="42" rx="9" fill="#FBE6E0" stroke="#C0392B" stroke-width=".8"/>
+      <text class="nt" id="bel-t" x="660" y="40" text-anchor="middle" fill="#7A241B">Rigid demand</text>
+      <text class="ns" id="s-bel" x="660" y="54" text-anchor="middle" fill="#9A2A1C"></text></g>
+
+    <g><rect x="240" y="104" width="360" height="42" rx="9" fill="#EEEDFE" stroke="#534AB7" stroke-width=".6"/>
+      <text class="nt" x="420" y="120" text-anchor="middle" fill="#3C3489">Insula · ACC · vmPFC appraisal hub</text>
+      <text class="ns" id="s-hub" x="420" y="134" text-anchor="middle" fill="#534AB7"></text></g>
+
+    <g><rect x="300" y="190" width="240" height="42" rx="9" fill="#EEEDFE" stroke="#534AB7" stroke-width=".6"/>
+      <text class="nt" x="420" y="206" text-anchor="middle" fill="#3C3489">Default mode · the replay</text>
+      <text class="ns" id="s-rep" x="420" y="220" text-anchor="middle" fill="#534AB7"></text></g>
+
+    <g><rect id="exitbox" x="560" y="190" width="194" height="42" rx="9" fill="#F1EFE8" stroke="#a8a69c" stroke-width=".8" stroke-dasharray="4 3"/>
+      <text class="nt" id="exit-t" x="657" y="206" text-anchor="middle" fill="#6b6a63">Rooted self</text>
+      <text class="ns" id="s-exit" x="657" y="220" text-anchor="middle" fill="#8b8a82"></text></g>
+
+    <g><rect x="140" y="278" width="136" height="44" rx="9" fill="#E1F5EE" stroke="#0F6E56" stroke-width=".6"/>
+      <text class="nt" x="208" y="294" text-anchor="middle" fill="#085041">Serotonin</text>
+      <text class="ns" id="s-ser" x="208" y="308" text-anchor="middle" fill="#0F6E56"></text></g>
+    <g><rect x="352" y="278" width="136" height="44" rx="9" fill="#E1F5EE" stroke="#0F6E56" stroke-width=".6"/>
+      <text class="nt" x="420" y="294" text-anchor="middle" fill="#085041">Amygdala</text>
+      <text class="ns" id="s-amy" x="420" y="308" text-anchor="middle" fill="#0F6E56"></text></g>
+    <g><rect x="564" y="278" width="136" height="44" rx="9" fill="#E1F5EE" stroke="#0F6E56" stroke-width=".6"/>
+      <text class="nt" x="632" y="294" text-anchor="middle" fill="#085041">Noradrenaline</text>
+      <text class="ns" id="s-nor" x="632" y="308" text-anchor="middle" fill="#0F6E56"></text></g>
+
+    <g><rect x="140" y="386" width="136" height="44" rx="9" fill="#F1EFE8" stroke="#5F5E5A" stroke-width=".6"/>
+      <text class="nt" x="208" y="402" text-anchor="middle" fill="#444441">My sleep</text>
+      <text class="ns" id="s-slp" x="208" y="416" text-anchor="middle" fill="#5F5E5A"></text></g>
+    <g><rect id="arobox" x="352" y="386" width="136" height="44" rx="9" fill="#FBE6E0" stroke="#C0392B" stroke-width=".6"/>
+      <text class="nt" id="aro-t" x="420" y="402" text-anchor="middle" fill="#7A241B">Arousal floor</text>
+      <text class="ns" id="s-aro" x="420" y="416" text-anchor="middle" fill="#9A2A1C"></text></g>
+    <g><rect x="564" y="386" width="136" height="44" rx="9" fill="#F1EFE8" stroke="#5F5E5A" stroke-width=".6"/>
+      <text class="nt" x="632" y="402" text-anchor="middle" fill="#444441">My body</text>
+      <text class="ns" id="s-bod" x="632" y="416" text-anchor="middle" fill="#5F5E5A"></text></g>
+  </svg>
+  </div>
+  <p class="swipe">← swipe to explore the diagram →</p>
+  </div>
+
+  <div class="key">
+    <span><i class="sw2" style="background:#C0392B"></i>the loop: circling with no close</span>
+    <span><i class="sw2" style="background:#0F6E56"></i>a layer coming into line</span>
+    <span><i class="sw2" style="background:#EEEDFE;border:1px solid #534AB7"></i>mind</span>
+    <span><i class="sw2" style="background:#F1EFE8;border:1px solid #5F5E5A"></i>body</span>
+  </div>
+
+  <div class="levers">
+    <button class="lever" id="lv-act" onclick="toggle('act',this)">
+      <span class="lt"><span class="sw"></span>I separate my worth from the outcome</span>
+      <p class="ld">When this stops deciding my worth, the alarm loses its root.</p>
+    </button>
+    <button class="lever" id="lv-calm" onclick="toggle('calm',this)">
+      <span class="lt"><span class="sw"></span>I lower the arousal floor</span>
+      <p class="ld">A calmer body gives the loop less to run on.</p>
+    </button>
+    <button class="lever" id="lv-belief" onclick="toggle('belief',this)">
+      <span class="lt"><span class="sw"></span>I have Demetri find the rigid beliefs trapping me</span>
+      <p class="ld">A demand that softens stops reopening the file. I can't spot this one from inside it.</p>
+    </button>
+  </div>
+
+  <button class="reset" onclick="reset()">Reset to the loop</button>
+
+  <p class="foot">These three layers hold only when they move together: bedrock, trunk, and canopy as one tree. Working them as a whole, and mapping the exact steps to yours, is what Demetri does with you.</p>
+</div>
+
+<script>
+  const wrap=document.querySelector('.wrap');
+  // toggles: act = Bedrock (belonging), calm = Trunk (body), belief = Canopy (thoughts)
+  const S={act:false,calm:false,belief:false};
+  const EV={
+    act:{off:'This still feels like a verdict on me.', on:'My worth isn\'t riding on this.'},
+    calm:{off:'My body is still on high alert.', on:'My body has settled.'},
+    bel:{off:'A rigid rule keeps reopening it.', on:'The rule has loosened its grip.'}
+  };
+  const RES={
+    '':  ['⟳','<b>No layer addressed.</b> The loop runs free.'],
+    'a': ['~','<b>Rooted, but body and thoughts still drive it.</b>'],
+    'c': ['~','<b>Calmer, but worth and thoughts still drive it.</b>'],
+    'b': ['~','<b>Clearer, but worth and body still drive it.</b>'],
+    'ac':['~','<b>Rooted and calm. The rigid rule still reopens it.</b>'],
+    'ab':['~','<b>Rooted and clear. The body still runs hot.</b>'],
+    'cb':['~','<b>Calm and clear. It still feels like a verdict on me.</b>'],
+    'acb':['✓','<b>All three layers in line.</b> The whole tree holds, and the loop lets go.']
+  };
+  const set=(id,v)=>document.getElementById(id).textContent=v;
+  const attr=(id,k,v)=>document.getElementById(id).setAttribute(k,v);
+  function render(){
+    const {act,calm,belief}=S;
+    const key=(act?'a':'')+(calm?'c':'')+(belief?'b':'');
+    const lvl=act+calm+belief;
+    wrap.dataset.level=lvl;wrap.dataset.act=act?1:0;wrap.dataset.belief=belief?1:0;
+    const r=RES[key];
+    set('dir',r[0]);
+    document.getElementById('res').innerHTML=r[1];
+    [['act',act,'p-act','t-act'],['calm',calm,'p-calm','t-calm'],['bel',belief,'p-bel','t-bel']]
+      .forEach(([k,on,pid,tid])=>{
+        const p=document.getElementById(pid);
+        p.className='pill '+(on?'yes':'no');p.textContent=on?'✓':'✕';
+        set(tid, EV[k][on?'on':'off']);
+      });
+
+    set('s-narr', act&&belief?'"it doesn\'t define me, I can let it go"' : act?'"this doesn\'t decide my worth"' : belief?'"I\'d have preferred otherwise"' : calm?'"quieter, but still there"' : '"why can\'t I let this go?"');
+    set('s-hub', belief&&act?'verdict: RESOLVED · stand down' : belief?'verdict: open · but bearable' : act?'verdict: not a threat to me' : calm?'verdict: UNRESOLVED · but calmer' : 'verdict: UNRESOLVED · stay alert');
+    set('s-rep', act&&belief?'quiet · it passes through' : act?'less to defend' : belief?'runs with less charge' : calm?'still running · softer' : 'running it again · and again');
+    set('s-amy', act?'the stake is gone' : belief?'threat tag weakened' : 'tagged: threat to me');
+    set('s-ser', calm?'steadier':'depleted · low tolerance');
+    set('s-nor', calm?'lower · baseline':'high · scanning');
+    set('s-slp', calm?'consolidated':'thin · 3am replays');
+    set('s-aro', calm?'lowered':'stuck ON');
+    set('s-bod', calm?'settled':'wired · tense');
+    set('aro-t', calm?'Arousal floor':'Arousal floor 🔥');
+    set('s-exit', act?'worth isn\'t at stake':'worth feels on the line');
+    set('exit-t', act?'Rooted self ✓':'Rooted self');
+    set('bel-t', belief?'Preference':'Rigid demand');
+    set('s-bel', belief?'"I\'d strongly prefer, and I can bear it"':'MUST · CAN\'T STAND · AWFUL');
+    set('l-bedge', belief?'holds no charge':'sets the verdict');
+    set('l-will', belief?'I don\'t need to suppress it':'"just stop thinking about it"');
+
+    attr('exitbox','fill',act?'#E1F5EE':'#F1EFE8');
+    attr('exitbox','stroke',act?'#0F6E56':'#a8a69c');
+    attr('exitbox','stroke-dasharray',act?'none':'4 3');
+    attr('exit-t','fill',act?'#085041':'#6b6a63');
+    attr('s-exit','fill',act?'#0F6E56':'#8b8a82');
+
+    attr('beliefbox','fill',belief?'#E1F5EE':'#FBE6E0');
+    attr('beliefbox','stroke',belief?'#0F6E56':'#C0392B');
+    attr('bel-t','fill',belief?'#085041':'#7A241B');
+    attr('s-bel','fill',belief?'#0F6E56':'#9A2A1C');
+    attr('l-bedge','fill',belief?'#0F6E56':'#C0392B');
+
+    attr('arobox','fill',calm?'#F1EFE8':'#FBE6E0');
+    attr('arobox','stroke',calm?'#5F5E5A':'#C0392B');
+    attr('aro-t','fill',calm?'#444441':'#7A241B');
+    attr('s-aro','fill',calm?'#5F5E5A':'#9A2A1C');
+
+    document.getElementById('entryact').style.opacity=act?1:0;
+    document.getElementById('entrycalm').style.opacity=calm?1:0;
+    document.getElementById('entrybelief').style.opacity=belief?1:0;
+  }
+  function toggle(k,btn){S[k]=!S[k];btn.classList.toggle('on',S[k]);render();}
+  function reset(){S.act=S.calm=S.belief=false;
+    ['lv-act','lv-calm','lv-belief'].forEach(i=>document.getElementById(i).classList.remove('on'));
+    render();}
+  render();
+</script>
+</div></section>
+		<section class="closing"><div class="shell"><h2>Want your loops mapped and solved?</h2><p> Demetri anaylzes your loops and their interactions, and how to resolve them into pure, prosperous alignment.</p><div class="actions" style="justify-content:center"><a class="button" href="booking.html">I’m ready to align</a><a class="button button-quiet" href="method.html">Read the Juniper Method</a></div></div></section>
+	</main>
+	<footer class="footer">
+		<div class="footer-inner shell"><a class="brand" href="index.html"><img class="brand-logo" src="logo_tr.png" width="600" height="421" alt="Juniper Wayfinding"></a><div class="footer-info"><p class="footer-tag">Juniper Wayfinding</p><p class="footer-contact"><span>[your email address]</span><span>[your phone / text number]</span></p></div><p class="footer-copy">© <span id="year"></span> Juniper Wayfinding</p></div>
+	</footer>
+	<script src="site.js" defer></script>
+</body>
+</html>
